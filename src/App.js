@@ -2,8 +2,8 @@ import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-d
 import Container from 'react-bootstrap/Container'
 import LoginPage from './containers/LoginPage'
 import RegisterPage from './containers/RegisterPage'
+import DashboardPage from './containers/DashboardPage'
 import {useCookies} from 'react-cookie'
-import {useState} from 'react'
 
 function App() {
     const [cookies, setCookie, removeCookie] = useCookies(['access', 'refresh'])
@@ -19,8 +19,7 @@ function App() {
                         {cookies.refresh ? <Redirect to='/' /> : <RegisterPage /> }
                     </Route>
                     <Route exact path="/">
-                        {cookies.refresh ? <></> : <Redirect to='/login' />}
-                        {/* <HomePage user={cookies.user} removeCookie={removeCookie} /> */}
+                        {cookies.refresh ? <DashboardPage refreshToken={ cookies.refresh } accessToken={cookies.access} /> : <Redirect to='/login' />}
                     </Route>
                 </Switch>
             </Container>

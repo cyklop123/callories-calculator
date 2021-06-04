@@ -12,18 +12,18 @@ const LoginPage = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [email, setEmail] = useState('')
-    
+
     const history = useHistory()
 
     const onSubmit = (e) => {
         e.preventDefault()
         console.log("Zarejestruj")
-        
+
         if (username.trim().length <= 0 || password.trim().length <= 0 || email.trim().length <= 0) {
             setError('Wrong credentials')
             return
         }
-        
+
         axios.post('http://localhost:3001/users/register', {
             username, password, email
           })
@@ -32,17 +32,18 @@ const LoginPage = () => {
             setError(null)
           })
           .catch(function (error) {
-            const status = error.response.status
-            
-            if (status === 403) {
-                setError('User with this credentials exists')
-                return
-            } else if (status === 400) {
-                setError('Incorrect data')
-                return
-            } else if (status === 500) {
-                setError('Cannot add user now. Try later!')
-                return
+            if(error.response){
+              switch(error.response.status){
+                case 400:
+                  setError('Incorrect data')
+                  break
+                case 403:
+                  setError('User with this credentials exists')
+                  break
+                case 500:
+                  setError('Cannot add user now. Try later!')
+                  break
+              }
             }
           });
     }

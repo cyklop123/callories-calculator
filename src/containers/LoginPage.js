@@ -19,31 +19,30 @@ const LoginPage = ({setCookie}) => {
         e.preventDefault()
         
         if (username.trim().length <= 0 || password.trim().length <= 0) {
-            setError('Wrong credentials')
-            return
+          setError('Wrong credentials')
+          return
         }
         
         axios.post('http://localhost:3001/users/login', {
             username, password
-          })
+          },{ withCredentials: true })
           .then(function (response) {
-            setCookie('access' ,response.data.accessToken)
             setCookie('refresh', response.data.refreshToken)
             setError(null)
           })
           .catch(function (error) {
-            const status = error.response.status
-            
-            if (status === 401) {
-                setError('Incorrect credentials')
-                return
-            } else if (status === 400) {
-                setError('Incorrect data')
-                return
-            } else if (status === 500) {
-                setError('Cannot login now. Try later!')
-                return
-            }
+            if(error.response){
+              switch(error.response.status){
+                case 400:
+                  setError('Incorrect credentials')
+                  break;
+                case 401:
+                  setError('Incorrect credentials')
+                  break;
+                case 500:
+                  setError('Cannot login now. Try later!')
+                }
+              }
           });
     }
 
