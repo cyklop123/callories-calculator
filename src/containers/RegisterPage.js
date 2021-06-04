@@ -43,6 +43,8 @@ const LoginPage = () => {
                 case 500:
                   setError('Cannot add user now. Try later!')
                   break
+                default:
+                    setError(null)
               }
             }
           });

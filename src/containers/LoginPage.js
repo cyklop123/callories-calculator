@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useHistory, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import LoginForm from '../components/LoginForm';
 import axios from 'axios'
 
@@ -12,8 +12,6 @@ const LoginPage = ({setCookie}) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState(null)
-    
-    const history = useHistory()
 
     const onSubmit = (e) => {
         e.preventDefault()
@@ -27,6 +25,7 @@ const LoginPage = ({setCookie}) => {
             username, password
           },{ withCredentials: true })
           .then(function (response) {
+            setCookie('role', response.data.role)
             setCookie('refresh', response.data.refreshToken)
             setError(null)
           })
@@ -41,6 +40,9 @@ const LoginPage = ({setCookie}) => {
                   break;
                 case 500:
                   setError('Cannot login now. Try later!')
+                  break
+                default:
+                  setError(null)
                 }
               }
           });
