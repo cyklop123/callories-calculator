@@ -3,6 +3,8 @@ import moment from 'moment'
 import {useEffect, useState} from 'react'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
+import { Button } from 'react-bootstrap'
+import { PlusLg } from 'react-bootstrap-icons'
 
 import UserProduct from '../components/UserProduct'
 import Summary from '../components/Summary'
@@ -59,8 +61,15 @@ const DashboardPage = () => {
     return (
         <>
         <Row>
+            <Col md="11">
+                {date && <DatePicker clickLeft={prevDay} clickRight={nextDay} date={date} />}
+            </Col>
+            <Col md="1">
+                <Button variant="success" className="m-1"><PlusLg /></Button>
+            </Col>
+        </Row>
+        <Row>
             <Col>
-                <DatePicker clickLeft={prevDay} clickRight={nextDay} date={date} />
                 {userProducts && <UserProduct userProducts={userProducts.userProducts} /> }
             </Col>
         </Row>
