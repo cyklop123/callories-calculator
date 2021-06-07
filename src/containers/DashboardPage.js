@@ -1,6 +1,10 @@
 import axios from 'axios'
 import {useEffect, useState} from 'react'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+
 import UserProduct from '../components/UserProduct'
+import Summary from '../components/Summary'
 
 const DashboardPage = () => {
 
@@ -23,11 +27,19 @@ const DashboardPage = () => {
             }
         })
     }, [])
-    
 
     return (
         <>
-            {userProducts && <UserProduct userProducts={userProducts} /> }
+        <Row>
+            <Col>
+                {userProducts && <UserProduct userProducts={userProducts.userProducts} /> }
+            </Col>
+        </Row>
+        <Row>
+            <Col>
+                {userProducts && <Summary summary={userProducts.summary} /> }
+            </Col>
+        </Row>
         </>
     )
 }

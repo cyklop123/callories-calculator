@@ -1,33 +1,33 @@
-import Table from 'react-bootstrap/Table'
+import Meal from './Meal'
+
+const meals = ['breakfast', 'brunch', 'dinner', 'tea', 'supper']
 
 const UserProduct = ({userProducts}) => {
+    meals.forEach(meal => {
+        const m = userProducts.filter(m => m.type === meal)
+        if(m.length <= 0)
+        {
+            userProducts.push({
+                type: meal,
+                products: []
+            })
+        }
+    })
+    userProducts.sort((a, b) => {
+        if ( meals.indexOf(a.type) < meals.indexOf(b.type) )
+            return -1
+        else
+            return 1
+    })    
+
     return (
-        <Table striped bordered hover size="sm">
-        <thead>
-            <tr>
-            <th style={{width:"10%"}}>#</th>
-            <th>Product</th>
-            <th style={{width:"10%"}}>Callories</th>
-            <th style={{width:"10%"}}>Carbohydrates</th>
-            <th style={{width:"10%"}}>Proteins</th>
-            <th style={{width:"10%"}}>Fats</th>
-            </tr>
-        </thead>
-        <tbody>
+        <div>
             {
-                userProducts.userProducts.map((userProduct, i) => (
-                    <tr key={userProduct._id}>
-                        <td>{i+1}</td>
-                        <td>{userProduct.product.name}</td>
-                        <td>{userProduct.product.kcal}</td>
-                        <td>{userProduct.product.carbs}</td>
-                        <td>{userProduct.product.prots}</td>
-                        <td>{userProduct.product.fats}</td>
-                    </tr>
-                ))      
+                userProducts.map((mealProducts, i) => (
+                    <Meal key={i} mealName={mealProducts.type} mealProducts={mealProducts.products} />
+                ))
             }
-        </tbody>
-        </Table>
+        </div>
     )
 }
 
