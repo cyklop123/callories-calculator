@@ -4,7 +4,7 @@ import { MEALS } from '../Constants';
 
 const meals = MEALS
 
-const UserProduct = ({userProducts}) => {
+const UserProduct = ({userProducts, deleteUserProduct}) => {
     meals.forEach(meal => {
         const m = userProducts.filter(m => m.type === meal)
         if(m.length <= 0)
@@ -26,7 +26,7 @@ const UserProduct = ({userProducts}) => {
         <div>
             {
                 userProducts.map((mealProducts, i) => (
-                    <Meal key={i} mealName={mealProducts.type} mealProducts={mealProducts.products} />
+                    <Meal key={i} mealName={mealProducts.type} mealProducts={mealProducts.products} handleDelete={deleteUserProduct} />
                 ))
             }
         </div>

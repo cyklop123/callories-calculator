@@ -1,8 +1,9 @@
-import axios from 'axios'
+import axiosInstance from '../ApiRequests'
 import moment from 'moment'
 import {useEffect, useState} from 'react'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
+import Alert from 'react-bootstrap/Alert'
 import { Button } from 'react-bootstrap'
 import { PlusLg } from 'react-bootstrap-icons'
 
@@ -13,30 +14,11 @@ import AddProduct from '../components/AddProduct'
 
 const DashboardPage = ({cookies, removeCookie}) => {
 
-    const axiosInstance = axios.create({
-        baseURL: 'http://localhost:3001',
-        withCredentials: true
-    })
-    axiosInstance.interceptors.response.use(response => response, async function(error) {
-        const originalRequest = error.config
-        if( error.response && error.response.status === 403 && !originalRequest._retry) {
-            originalRequest._retry = true
-            return axiosInstance.post('/users/refresh', {
-                token: cookies.refresh
-            }).then(res => {
-                if(res.status === 200){
-                    return axiosInstance(originalRequest)
-                }
-            }).catch(err => {
-                console.log("Token refresh error", err)
-            })
-        }
-        return Promise.reject(error)
-    })
-
     const [userProducts, setUserProducts] = useState(null)
     const [date, setDate] = useState(null)
     const [addProduct, setAddProduct] = useState(false)
+    const [alert, setAlert] = useState({variant:'', message: ''})
+    const [alertShow, setAlertShow] = useState(false)
     
     useEffect(() => {
         const today = new Date().toISOString().split('T')[0]
@@ -62,18 +44,37 @@ const DashboardPage = ({cookies, removeCookie}) => {
         getAllProduct(tomorrow)
     }
 
-    const getAllProduct = day => {
-        axiosInstance.get('/'+day)
-            .then(res => {
-                setUserProducts(res.data)
-                setDate(day)
-            })
-            .catch(err => {
-                if(err.response){
-                    console.log(err.response.code)
-                    setUserProducts(null)
-                }
-            })
+    //panel
+    const getAllProduct = async day => {
+        try{
+            const res = await axiosInstance.get('/'+day)
+            setUserProducts(res.data)
+            setDate(day)
+        }
+        catch(err){
+            console.log(err.response.code)
+            setUserProducts(null)
+        }
+    }
+    const deleteUserProduct = async e => {
+        e.preventDefault()
+        const id = e.currentTarget.dataset.id
+        try{
+            await axiosInstance.delete('/'+id)
+            getAllProduct(date)
+            showAlertAndCloseAfter(5000, 'success', 'Succesfuly deleted')
+        }
+        catch(e){
+            console.log(e)
+            showAlertAndCloseAfter(5000, 'danger', 'Error while deleting')
+        }
+    }
+    const showAlertAndCloseAfter = (ms, variant, message) => {
+        setAlertShow(true)
+        setAlert({variant, message})
+        setTimeout(() => {
+            setAlertShow(false)
+        }, ms)
     }
 
     //modal
@@ -86,19 +87,24 @@ const DashboardPage = ({cookies, removeCookie}) => {
     const [productQuantity, setProductQuantity] = useState(0)
     const [productMeal, setProductMeal] = useState('')
     const [wrongData, setWrongData] = useState(null)
-    const handleSubmitAddProduct = (e) => {
+    const handleSubmitAddProduct = async e => {
         e.preventDefault()
         if (product === 0 || productQuantity === 0 || productMeal === '') return setWrongData("Enter data")
         setWrongData(null)
-        axiosInstance.post('/', {
-            productId: product.value,
-            quantity: productQuantity,
-            type: productMeal,
-            date
-        }).then(res => {
+        try {
+            await axiosInstance.post('/', {
+                productId: product.value,
+                quantity: productQuantity,
+                type: productMeal,
+                date
+            })
             getAllProduct(date)
             handleClose()
-        })
+        }
+        catch (e){
+            console.log(e)
+            setWrongData("Error while adding")
+        }
     }
     const getOptions = (query) => {
         
@@ -122,7 +128,8 @@ const DashboardPage = ({cookies, removeCookie}) => {
         </Row>
         <Row>
             <Col>
-                {userProducts && <UserProduct userProducts={userProducts.userProducts} /> }
+                {<Alert show={alertShow} dismissible variant={alert.variant} onClose={() => setAlertShow(false)}>{alert.message}</Alert>}
+                {userProducts && <UserProduct userProducts={userProducts.userProducts} deleteUserProduct={deleteUserProduct} /> }
             </Col>
         </Row>
         <Row>
