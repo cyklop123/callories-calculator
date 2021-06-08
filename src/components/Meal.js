@@ -22,10 +22,10 @@ const Meal = ({mealName, mealProducts}) => {
                         <tr key={product._id}>
                             <td>{i+1}</td>
                             <td>{product.name}</td>
-                            <td>{product.kcal}</td>
-                            <td>{product.carbs}</td>
-                            <td>{product.prots}</td>
-                            <td>{product.fats}</td>
+                            <td>{Math.round( product.kcal * 100)/100}</td>
+                            <td>{Math.round( product.carbs * 100)/100}</td>
+                            <td>{Math.round( product.prots * 100)/100}</td>
+                            <td>{Math.round( product.fats * 100)/100}</td>
                         </tr>
                     ))      
                 }

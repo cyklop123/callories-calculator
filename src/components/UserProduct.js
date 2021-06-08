@@ -1,6 +1,8 @@
 import Meal from './Meal'
 
-const meals = ['breakfast', 'brunch', 'dinner', 'tea', 'supper']
+import { MEALS } from '../Constants';
+
+const meals = MEALS
 
 const UserProduct = ({userProducts}) => {
     meals.forEach(meal => {
