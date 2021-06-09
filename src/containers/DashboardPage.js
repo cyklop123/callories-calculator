@@ -52,7 +52,7 @@ const DashboardPage = ({cookies, removeCookie}) => {
             setDate(day)
         }
         catch(err){
-            console.log(err.response.code)
+            console.log(err.response)
             setUserProducts(null)
         }
     }
