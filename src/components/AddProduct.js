@@ -29,7 +29,7 @@ const AddProduct = ({modal, getOptions, form}) => {
 
                         <Form.Group controlId="addProductForm.MealType">
                             <Form.Label>Meal type</Form.Label>
-                            <Form.Control as="select" onChange={e => form.setProductMeal(e.target.value)}>
+                            <Form.Control data-testid='select' as="select" onChange={e => form.setProductMeal(e.target.value)}>
                                 <option value=""></option>
                                 {
                                     MEALS.map((meal, i) => (
